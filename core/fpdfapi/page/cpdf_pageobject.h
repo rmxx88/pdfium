@@ -63,6 +63,10 @@ class CPDF_PageObject {
   void SetDirty(bool value) { m_bDirty = value; }
   bool IsDirty() const { return m_bDirty; }
   void TransformClipPath(const CFX_Matrix& matrix);
+  //update on 20240507 显示隐藏object
+  void SetVisible(bool visible) { visible_item_ = visible; }
+  bool IsVisible() { return visible_item_; }
+  //
   void TransformGeneralState(const CFX_Matrix& matrix);
 
   void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
@@ -146,6 +150,8 @@ class CPDF_PageObject {
   int32_t m_ContentStream;
   // The resource name for this object.
   ByteString m_ResourceName;
+  //显示与隐藏obj对象
+  bool visible_item_ = true;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_

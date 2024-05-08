@@ -15,7 +15,10 @@ CPDF_Path::~CPDF_Path() = default;
 const std::vector<CFX_Path::Point>& CPDF_Path::GetPoints() const {
   return m_Ref.GetObject()->GetPoints();
 }
-
+// update on 20240306 修改点位置
+std::vector<CFX_Path::Point>& CPDF_Path::GetPoints() {
+  return m_Ref.GetPrivateCopy()->GetPoints();
+}
 void CPDF_Path::ClosePath() {
   m_Ref.GetPrivateCopy()->ClosePath();
 }

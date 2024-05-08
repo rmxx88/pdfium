@@ -22,6 +22,9 @@ class CPDF_ImageObject final : public CPDF_PageObject {
 
   // CPDF_PageObject
   Type GetType() const override;
+  //update on 20240506 设置是否显示图片标识，如果是true则显示笔迹图片，如果是false则隐藏图片
+  void SetVisibleImage(bool visible);
+  //
   void Transform(const CFX_Matrix& matrix) override;
   bool IsImage() const override;
   CPDF_ImageObject* AsImage() override;

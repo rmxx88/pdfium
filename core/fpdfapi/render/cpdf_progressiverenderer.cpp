@@ -75,6 +75,26 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           pCurObj->GetRect().right >= m_ClipRect.left &&
           pCurObj->GetRect().bottom <= m_ClipRect.top &&
           pCurObj->GetRect().top >= m_ClipRect.bottom) {
+          //update on 20240507 不渲染要隐藏的对象
+          if (pCurObj->IsImage()) {
+          CPDF_ImageObject* image_obj = pCurObj->AsImage();
+          RetainPtr<const CPDF_Dictionary> dic = image_obj->GetImage()->GetDict();
+          if (dic->IsNull())
+           {
+             ++iter;
+            continue;
+           }
+          bool visibel = true;
+          if (dic->KeyExist("Visible")) {
+          visibel = dic->GetIntegerFor("Visible");
+          }
+         if (!visibel) {
+          ++iter;
+          printf("CPDF_RenderStatus::RenderObjectList enter the AIE\r\n");
+          continue;
+          }
+         }
+        //
         if (m_pOptions->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
           if (m_pDevice->GetDeviceType() == DeviceType::kPrinter) {

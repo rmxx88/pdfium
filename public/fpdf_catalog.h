@@ -27,6 +27,14 @@ extern "C" {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFCatalog_IsTagged(FPDF_DOCUMENT document);
 
+//update on 20240429 设置ENT数据
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDF_SetEnt(FPDF_DOCUMENT document,char* ent_data);
+//update on 20240429 获取ENT数据
+FPDF_EXPORT char* FPDF_CALLCONV 
+FPDF_GetEnt(FPDF_DOCUMENT document);
+//
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

@@ -59,8 +59,68 @@ source_set("fpdfsdk") {
     "fpdf_thumbnail.cpp",
     "fpdf_transformpage.cpp",
     "fpdf_view.cpp",
+    #update on 20240129
+    "suniapdf_core.cpp",
+    "suniafile_base.h",
+    "suniafile_base.cpp",
+    "suniastring_base.h",
+    "suniastring_base.cpp",
+    "suniacolor_convert.h",
+    "suniacolor_convert.cpp",
+    #
   ]
-
+  #update on 20240410
+  #cputype:0(arm64-v8a) 1(armeabi-v7a) 2(x64) 3(x86)
+  cputype = 0
+  if(cputype == 0){
+  #ldflags = ["-Wl,-rpath-link,/home/rm/Desktop/project/third_party/Authenticate/arm64-v8a"]
+  lib_dirs = [ "/home/rm/Desktop/project/third_party/Authenticate/arm64-v8a",
+              "/home/rm/Downloads/android-ndk-r21e-linux-x86_64/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/30",
+              "/home/rm/Downloads/android-ndk-r21e-linux-x86_64/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x"]
+  libs = [
+    #"android",
+    #"log",
+    "c++",
+    "gcc_real",
+    #"c",
+    "dl",
+    #"jnigraphics",
+    "m",
+    #"neuralnetworks",
+    #"stdc++",
+    #"sync",
+    "z",
+    "wolfssl",
+    "curl",
+    "verify",
+    #"test",
+    ]
+  }
+  if(cputype == 1){
+  #ldflags = ["-Wl,-rpath-link,/home/rm/Desktop/project/third_party/Authenticate/armeabi-v7a"]
+  lib_dirs = [ "/home/rm/Desktop/project/third_party/Authenticate/armeabi-v7a",
+             "/home/rm/Downloads/android-ndk-r21e-linux-x86_64/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/30",
+             "/home/rm/Downloads/android-ndk-r21e-linux-x86_64/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x"]
+  libs = [
+    #"android",
+    #"log",
+    "c++",
+    "gcc_real",
+    #"c",
+    "dl",
+    #"jnigraphics",
+    #"m",
+    #"neuralnetworks",
+    #"stdc++",
+    #"sync",
+    "z",
+    "wolfssl",
+    "curl",
+    "verify",
+    #"test",
+    ]
+  }
+  #
   configs += [
     "../:pdfium_strict_config",
     "../:pdfium_noshorten_config",

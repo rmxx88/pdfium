@@ -54,6 +54,9 @@ void CPDF_ImageObject::CalcBoundingBox() {
 
 void CPDF_ImageObject::SetImage(RetainPtr<CPDF_Image> pImage) {
   MaybePurgeCache();
+  //update on 20240507
+  pImage->SetVisibleImage(IsVisible());
+  //
   m_pImage = std::move(pImage);
 }
 
@@ -95,4 +98,9 @@ void CPDF_ImageObject::MaybePurgeCache() {
 
   m_pImage.Reset();  // Clear my reference before asking the cache.
   pDoc->MaybePurgeImage(objnum);
+}
+// update on 20240506 设置是否是sunia pdf
+// core标识，如果是false则隐藏笔迹图片，是true则显示图片
+void CPDF_ImageObject::SetVisibleImage(bool visible) {
+  SetVisible(visible);
 }

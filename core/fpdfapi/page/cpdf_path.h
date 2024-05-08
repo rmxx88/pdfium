@@ -22,6 +22,9 @@ class CPDF_Path {
   bool HasRef() const { return !!m_Ref; }
 
   const std::vector<CFX_Path::Point>& GetPoints() const;
+   //update on 20240306 修改点位置
+ std::vector<CFX_Path::Point>& GetPoints();
+ //
   void ClosePath();
 
   CFX_PointF GetPoint(int index) const;

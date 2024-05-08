@@ -26,11 +26,11 @@ group("freetype_common") {
 }
 
 config("pdfium_common_config") {
-  cflags = ["-fvisibility=default"]
+  cflags = []
   cflags_cc = []
   ldflags = []
   include_dirs = [ "." ]
-  defines = ["FPDFSDK_EXPORTS"]
+  defines = []
 
   if (!use_system_libopenjpeg2) {
     defines += [ "OPJ_STATIC" ]
@@ -445,17 +445,6 @@ component("pdfium") {
     complete_static_lib = true
     configs -= [ "//build/config/compiler:thin_archive" ]
   }
-
-}
-
-shared_library("pdfsdk") {
-  #ndk path
-  #include_dirs = ["/home/rm/Downloads/android-ndk-r26d/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1"]
-  deps = [":pdfium"]
-  if (target_os == "android") {
-    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
-  }
-  
 }
 
 # Targets below this are only visible within this file.
@@ -638,4 +627,3 @@ if (enable_rust) {
     deps = [ "//build/rust/tests" ]
   }
 }
-

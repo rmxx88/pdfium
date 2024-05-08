@@ -333,7 +333,17 @@ RetainPtr<const CPDF_Array> GetInkList(FPDF_ANNOTATION annot) {
   return annot_dict ? annot_dict->GetArrayFor(pdfium::annotation::kInkList)
                     : nullptr;
 }
-
+//update on 20240307 获取可修改的Array
+RetainPtr<CPDF_Array> GetMutableInkList(FPDF_ANNOTATION annot) {
+  FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
+  if (subtype != FPDF_ANNOT_INK) {
+    return nullptr;
+  }
+  CPDF_Dictionary* annot_dict = GetMutableAnnotDictFromFPDFAnnotation(annot);
+  return annot_dict ? annot_dict->GetMutableArrayFor(pdfium::annotation::kInkList)
+                    : nullptr;
+}
+//
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -647,7 +657,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
                                                        unsigned int R,
                                                        unsigned int G,
                                                        unsigned int B,
-                                                       unsigned int A) {
+                                                       unsigned int A,
+                                                       bool is_change) {
   RetainPtr<CPDF_Dictionary> pAnnotDict =
       GetMutableAnnotDictFromFPDFAnnotation(annot);
 
@@ -657,9 +668,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
   // For annotations with their appearance streams already defined, the path
   // stream's own color definitions take priority over the annotation color
   // definitions set by this method, hence this method will simply fail.
-  if (HasAPStream(pAnnotDict.Get()))
-    return false;
-
+  // if (HasAPStream(pAnnotDict.Get()))
+  //   return false;
+ //update on 20240308
+ if (!is_change) {
+   if (HasAPStream(pAnnotDict.Get())) {
+     return false;
+   }
+ }
   // Set the opacity of the annotation.
   pAnnotDict->SetNewFor<CPDF_Number>("CA", A / 255.f);
 
@@ -913,6 +929,38 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
     }
   }
   return points_len;
+}
+
+// update on 20240307 修改ink matrix
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_SetInkListPath(FPDF_ANNOTATION annot,
+                         unsigned long path_index,
+                         float x_scale,
+                         float y_scale)
+{
+  //test
+  CPDF_Dictionary* annot_dict = GetMutableAnnotDictFromFPDFAnnotation(annot);
+  RetainPtr<CPDF_Array> ink_list =
+      annot_dict->GetMutableArrayFor(pdfium::annotation::kInkList);
+  //
+  RetainPtr<CPDF_Array> ink_list1 = GetMutableInkList(annot);
+  if (ink_list->IsEmpty()) {
+    return 0;
+  }
+  RetainPtr<CPDF_Array> path = ink_list->GetMutableArrayAt(path_index);
+  if (!path) {
+    return 0;
+  }
+  const unsigned long points_len =
+      fxcrt::CollectionSize<unsigned long>(*path) / 2;
+    for (unsigned long i = 0; i < points_len; ++i) {
+      float x = path->GetFloatAt(i * 2);
+      float y = path->GetFloatAt(i * 2 + 1);
+      path->SetAt(i*2, pdfium::MakeRetain<CPDF_Number>(x*x_scale));
+      path->SetAt(i * 2 + 1, pdfium::MakeRetain<CPDF_Number>(y * y_scale));
+  }
+  UpdateBBox(annot_dict);
+  return 1;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,

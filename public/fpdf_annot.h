@@ -302,7 +302,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
                                                        unsigned int R,
                                                        unsigned int G,
                                                        unsigned int B,
-                                                       unsigned int A);
+                                                       unsigned int A,bool is_change = false);
 
 // Experimental API.
 // Get the color of an annotation. If no color is specified, default to yellow
@@ -459,6 +459,11 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
                          FS_POINTF* buffer,
                          unsigned long length);
 
+//update on 20240307 修改ink matrix
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_SetInkListPath(FPDF_ANNOTATION annot,
+                         unsigned long path_index,float x_scale,float y_scale);
+//
 // Experimental API.
 // Get the starting and ending coordinates of a line annotation.
 //

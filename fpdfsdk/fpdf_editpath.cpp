@@ -95,7 +95,26 @@ FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index) {
 
   return FPDFPathSegmentFromFXPathPoint(&points[index]);
 }
-
+//update on 20240306 设置segment位置 测试
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPath_SetPathSegment(FPDF_PAGEOBJECT path, int index,float x,float y,FS_MATRIX matrix) {
+  FPDF_BOOL suc = false;
+  auto* pPathObj = CPDFPathObjectFromFPDFPageObject(path);
+  if (!pPathObj) {
+    return suc;
+  }
+  pdfium::span<CFX_Path::Point> points = pPathObj->path().GetPoints();
+  if (!fxcrt::IndexInBounds(points, index)) {
+    return suc;
+  }
+  points[index].m_Point.x = x;
+  points[index].m_Point.y = y;
+  auto cfx_matrix = CFXMatrixFromFSMatrix(matrix);
+  pPathObj->path().Transform(cfx_matrix);
+  suc = true;
+  return suc;
+}
+//
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPath_MoveTo(FPDF_PAGEOBJECT path,
                                                     float x,
                                                     float y) {

@@ -344,7 +344,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
 //
 // Returns a handle to a new image object.
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
-FPDFPageObj_NewImageObj(FPDF_DOCUMENT document);
+FPDFPageObj_NewImageObj(FPDF_DOCUMENT document,/*update on 20240506 插入是否AIE 显示图片标识*/ FPDF_BOOL visible_image = true);
 
 // Experimental API.
 // Get number of content marks in |page_object|.
@@ -1047,6 +1047,13 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path);
 // Returns the handle to the segment, or NULL on faiure.
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
 FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index);
+
+// update on 20240306 设置segment位置 测试
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPath_SetPathSegment(FPDF_PAGEOBJECT path,
+                        int index,
+                        float x,
+                        float y, FS_MATRIX matrix);
 
 // Get coordinates of |segment|.
 //

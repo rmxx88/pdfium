@@ -111,12 +111,16 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 }  // namespace
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
-FPDFPageObj_NewImageObj(FPDF_DOCUMENT document) {
+FPDFPageObj_NewImageObj(FPDF_DOCUMENT document/*update on 20240506 插入是否AIE 显示图片标识*/,
+        FPDF_BOOL visible_image) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
   auto pImageObj = std::make_unique<CPDF_ImageObject>();
+  //update on 20240506 是否显示图片标识
+  pImageObj->SetVisibleImage(visible_image);
+  //
   pImageObj->SetImage(pdfium::MakeRetain<CPDF_Image>(pDoc));
 
   // Caller takes ownership.

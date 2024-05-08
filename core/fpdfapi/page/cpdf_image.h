@@ -69,7 +69,10 @@ class CPDF_Image final : public Retainable {
 
   RetainPtr<CFX_DIBBase> DetachBitmap();
   RetainPtr<CFX_DIBBase> DetachMask();
-
+  //update on 20240507
+  void SetVisibleImage(bool visible) { visible_image_ = visible; }
+  bool IsVisibleImage() { return visible_image_; }
+  //
  private:
   explicit CPDF_Image(CPDF_Document* pDoc);
   CPDF_Image(CPDF_Document* pDoc, RetainPtr<CPDF_Stream> pStream);
@@ -91,6 +94,9 @@ class CPDF_Image final : public Retainable {
   RetainPtr<CFX_DIBBase> m_pMask;
   RetainPtr<CPDF_Stream> m_pStream;
   RetainPtr<const CPDF_Dictionary> m_pOC;
+  //update on 20240507 隐藏与显示图片
+  bool visible_image_ = true;
+  //
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGE_H_

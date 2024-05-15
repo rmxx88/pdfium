@@ -30,7 +30,9 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
-
+//update on 20240514
+#include "fpdfsdk/suniastring_base.h"
+//
 namespace {
 
 CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
@@ -113,7 +115,101 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
   WideString title = cBookmark.GetTitle();
   return Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen);
 }
-
+// update on 20240422 修改大纲标题
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFBookmark_SetTitle(FPDF_BOOKMARK bookmark, FPDF_WIDESTRING target_outline) {
+  FPDF_BOOL suc = false;
+  if (!bookmark) {
+    return suc;
+  }
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
+  suc = cBookmark.SetTitle((const wchar_t*)target_outline);
+  return suc;
+}
+// update on 20240428 删除大纲标题
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFBookmark_DelTitle(FPDF_DOCUMENT doc,
+                      FPDF_BOOKMARK bookmark) {
+  FPDF_BOOL suc = false;
+  if (!bookmark) {
+    return suc;
+  }
+  CPDF_IndirectObjectHolder* holder = (CPDF_IndirectObjectHolder*)doc;
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
+  suc = cBookmark.DelTitle(holder);
+  return suc;
+}
+// update on 20240513 添加大纲
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFBookmark_AddTitle(FPDF_DOCUMENT doc,
+                      FPDF_BOOKMARK parent_bookmark,
+                      FPDF_WIDESTRING target_outline,
+                      int page_index,
+                      double x,
+                      double y,
+                      double zoom) {
+  FPDF_BOOL suc = false;
+  if (!parent_bookmark) {
+    return suc;
+  }
+  /*CPDF_IndirectObjectHolder* holder = (CPDF_IndirectObjectHolder*)doc;*/
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(parent_bookmark)));
+  suc = cBookmark.AddTitle(CPDFDocumentFromFPDFDocument(doc),
+                           (const wchar_t*)target_outline,page_index,x,y,zoom);
+  return suc;
+}
+// update on 20240514 获取每个层级的第一个大纲对象
+FPDF_EXPORT Outlines* FPDF_CALLCONV
+FPDFBookmark_GetFirstOutline(FPDF_DOCUMENT doc, FPDF_BOOKMARK bookmark) {
+  //获取最上层第一个大纲
+  //bookmark 如果为nullptr 则表示获取pdf的第一个大纲
+  Outlines* outlines = new Outlines;
+  FPDF_BOOKMARK first_bookmark = FPDFBookmark_GetFirstChild(doc, bookmark);
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(first_bookmark)));
+  std::wstring* name = new std::wstring();
+  sunia::StringBase sb;
+  *name = sb.GetPlatformWString((FPDF_WIDESTRING)cBookmark.GetTitle().c_str());
+  if (name->empty()) {
+    return outlines;
+  }
+  outlines->title = (wchar_t*)(*name).c_str();
+  outlines->page_index =
+      FPDFDest_GetDestPageIndex(doc, FPDFBookmark_GetDest(doc, first_bookmark));
+  outlines->parent = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDicItem("Parent"));
+  outlines->prev = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDicItem("Prev"));
+  outlines->next = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDicItem("Next"));
+  outlines->current = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDict());
+  outlines->is_have_child = cBookmark.GetCount();
+  return outlines;
+}
+// update on 20240514 获取同一层级的兄弟大纲
+FPDF_EXPORT Outlines* FPDF_CALLCONV
+FPDFBookmark_GetNextSiblingOutline(FPDF_DOCUMENT doc, FPDF_BOOKMARK bookmark) {
+  Outlines* outlines = new Outlines;
+  FPDF_BOOKMARK sibling_bookmark = FPDFBookmark_GetNextSibling(doc, bookmark);
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(sibling_bookmark)));
+  std::wstring* name = new std::wstring();
+  sunia::StringBase sb;
+  *name = sb.GetPlatformWString((FPDF_WIDESTRING)cBookmark.GetTitle().c_str());
+  if (name->empty()) {
+    return outlines;
+  }
+  outlines->title = (wchar_t*)(*name).c_str();
+  outlines->page_index = FPDFDest_GetDestPageIndex(
+      doc, FPDFBookmark_GetDest(doc, sibling_bookmark));
+  outlines->parent = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDicItem("Parent"));
+  outlines->prev = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDicItem("Prev"));
+  outlines->next = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDicItem("Next"));
+  outlines->current = FPDFBookmarkFromCPDFDictionary(cBookmark.GetDict());
+  outlines->is_have_child = cBookmark.GetCount();
+  return outlines;
+}
+//
 FPDF_EXPORT int FPDF_CALLCONV FPDFBookmark_GetCount(FPDF_BOOKMARK bookmark) {
   if (!bookmark)
     return 0;

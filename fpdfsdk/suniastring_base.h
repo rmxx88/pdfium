@@ -1,8 +1,8 @@
 /********************************************
-* ¹¦ÄÜÃèÊö£º1¡¢¿í×Ö·û´®Óë×Ö·û´®Ïà»¥×ª»»
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½à»¥×ªï¿½ï¿½
 *
-* ´´½¨ÈÕÆÚ£º20240129
-* ĞŞ¸ÄÈÕÆÚ£º
+* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½20240129
+* ï¿½Ş¸ï¿½ï¿½ï¿½ï¿½Ú£ï¿½
 *********************************************/
 #ifndef FPDFSDK_SUNIASTRING_BASE_H_
 #define FPDFSDK_SUNIASTRING_BASE_H_
@@ -10,10 +10,15 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <iostream>
+#include <memory>
 #include <vector>
 #include <public/fpdfview.h>
 namespace sunia
 {
+struct FreeDeleter {
+  inline void operator()(void* ptr) const { free(ptr); }
+};
+using ScopedFPDFWideString = std::unique_ptr<FPDF_WCHAR, sunia::FreeDeleter>;
 // Exported Class
 #ifdef __cplusplus
 extern "C" {
@@ -26,6 +31,8 @@ class StringBase{
                                                    char delimiter);
   std::string GetPlatformString(FPDF_WIDESTRING wstr);
   std::wstring GetPlatformWString(FPDF_WIDESTRING wstr);
+  //å°†å®½å­—èŠ‚è½¬æ¢æˆpdfå†…éƒ¨16è¿›åˆ¶
+  ScopedFPDFWideString GetFPDFWideString(const std::wstring& wstr);
 };
 #ifdef __cplusplus
 }

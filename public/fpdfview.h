@@ -123,7 +123,27 @@ typedef struct FPDF_BSTR_ {
   char* str;  // String buffer, manipulate only with FPDF_BStr_* methods.
   int len;    // Length of the string, in bytes.
 } FPDF_BSTR;
-
+//update on 20240514 大纲数据结构体
+/**
+* 大纲结构体
+* @title 大纲名称
+* @current 当前大纲指针对象
+* @page_index 点击大纲跳转到页面的索引 索引从0开始
+* @parent 指向父级大纲
+* @prev 指向前向大纲
+* @next 指向后继大纲
+* @is_have_child 是否有子大纲
+**/
+struct Outlines {
+  wchar_t* title = nullptr;
+  int page_index = 0;
+  FPDF_BOOKMARK parent = nullptr;
+  FPDF_BOOKMARK current = nullptr;
+  FPDF_BOOKMARK prev = nullptr;
+  FPDF_BOOKMARK next = nullptr;
+  bool is_have_child = false;
+};
+//
 // For Windows programmers: In most cases it's OK to treat FPDF_WIDESTRING as a
 // Windows unicode string, however, special care needs to be taken if you
 // expect to process Unicode larger than 0xffff.

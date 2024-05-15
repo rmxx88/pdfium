@@ -89,6 +89,28 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
                       void* buffer,
                       unsigned long buflen);
 
+//update on 20240422 修改大纲标题
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFBookmark_SetTitle(FPDF_BOOKMARK bookmark, FPDF_WIDESTRING target_outline);
+//update on 20240428 删除大纲标题
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFBookmark_DelTitle(FPDF_DOCUMENT doc,
+                      FPDF_BOOKMARK bookmark);
+//update on 20240513 添加大纲
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFBookmark_AddTitle(FPDF_DOCUMENT doc, FPDF_BOOKMARK parent_bookmark, FPDF_WIDESTRING target_outline,
+                      int page_index,
+                      double x,
+                      double y,
+                      double zoom);
+//update on 20240514 获取每个层级的第一个大纲对象
+FPDF_EXPORT Outlines* FPDF_CALLCONV
+FPDFBookmark_GetFirstOutline(FPDF_DOCUMENT doc, FPDF_BOOKMARK bookmark);
+//update on 20240514 获取同一层级的兄弟大纲
+FPDF_EXPORT Outlines* FPDF_CALLCONV
+FPDFBookmark_GetNextSiblingOutline(FPDF_DOCUMENT doc, FPDF_BOOKMARK bookmark);
+//
+
 // Experimental API.
 // Get the number of chlidren of |bookmark|.
 //

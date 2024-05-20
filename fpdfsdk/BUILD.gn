@@ -59,6 +59,15 @@ source_set("fpdfsdk") {
     "fpdf_thumbnail.cpp",
     "fpdf_transformpage.cpp",
     "fpdf_view.cpp",
+    #update on 20240321
+    "suniacolor_convert.cpp",
+    "suniacolor_convert.h",
+    "suniafile_base.cpp",
+    "suniafile_base.h",
+    "suniapdf_core.cpp",
+    "suniastring_base.cpp",
+    "suniastring_base.h",
+    #
   ]
 
   configs += [

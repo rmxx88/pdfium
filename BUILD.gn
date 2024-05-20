@@ -27,11 +27,16 @@ group("freetype_common") {
 
 config("pdfium_common_config") {
   cflags = []
+  #update on 20240416
+  #cflags = ["-fvisibility=default"]
+  #
   cflags_cc = []
   ldflags = []
   include_dirs = [ "." ]
   defines = []
-
+  #update on 20240416
+  defines = ["FPDFSDK_EXPORTS"]
+  #
   if (!use_system_libopenjpeg2) {
     defines += [ "OPJ_STATIC" ]
   }
@@ -375,6 +380,8 @@ source_set("pdfium_public_headers_impl") {
     "public/fpdf_text.h",
     "public/fpdf_transformpage.h",
     "public/fpdfview.h",
+    #update on 20240416
+    "public/suniapdf_core.h",
   ]
 }
 
@@ -385,8 +392,14 @@ group("pdfium_public_headers") {
     ":pdfium_implementation_config",
   ]
 }
-
+#update on 20240415
+#shared_library("pdfsdk") {
+#  deps = [":pdfium"]
+#}
+#
 component("pdfium") {
+#update on 20240419
+#static_library("pdfium") {
   output_name = "pdfium"
   libs = []
   configs += [ ":pdfium_strict_config" ]

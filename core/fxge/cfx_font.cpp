@@ -213,6 +213,7 @@ CFX_Font::~CFX_Font() {
   m_Face.Reset();
 
 #if BUILDFLAG(IS_APPLE)
+    
   ReleasePlatformResource();
 #endif
 }

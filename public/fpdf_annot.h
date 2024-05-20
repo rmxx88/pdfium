@@ -457,7 +457,11 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
                          unsigned long path_index,
                          FS_POINTF* buffer,
                          unsigned long length);
-
+//update on 20240307 修改ink matrix
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_SetInkListPath(FPDF_ANNOTATION annot,
+                         unsigned long path_index,float x_scale,float y_scale);
+//
 // Experimental API.
 // Get the starting and ending coordinates of a line annotation.
 //

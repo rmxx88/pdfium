@@ -1043,6 +1043,13 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPath_CountSegments(FPDF_PAGEOBJECT path);
 FPDF_EXPORT FPDF_PATHSEGMENT FPDF_CALLCONV
 FPDFPath_GetPathSegment(FPDF_PAGEOBJECT path, int index);
 
+// update on 20240306 设置segment位置 测试
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPath_SetPathSegment(FPDF_PAGEOBJECT path,
+                        int index,
+                        float x,
+                        float y, FS_MATRIX matrix);
+
 // Get coordinates of |segment|.
 //
 //   segment  - handle to a segment.
